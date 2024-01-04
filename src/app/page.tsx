@@ -1,6 +1,26 @@
+'use client'
 import Image from 'next/image'
+import getChars from "@/service/characters/getChars";
+import {useEffect, useState} from "react";
+import {TChar} from "@/types/TChar";
+import {TData} from "@/types/TData";
 
+async function getData() {
+  const res = await fetch(`https://rickandmortyapi.com/api/character`, {cache: "force-cache", t})
+
+  if (!res.ok) {
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error('Failed to fetch data')
+  }
+
+  return res.json() as Promise<TData<TChar[]>>
+
+}
 export default function Home() {
+  const [data, setData] = useState<TChar[] | null>()
+  useEffect(()=> {
+    getData().then(data=> setData(data.results)).then(()=>setData(null))
+  },[])
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
